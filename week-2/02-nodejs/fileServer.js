@@ -18,4 +18,31 @@ const path = require('path');
 const app = express();
 
 
+const PORT = 3000;
+
+app.use(express.json());
+
+app.get("/files", (req,res)=>{
+  fs.readdir(path.join(__dirname,'../02-nodejs/',),(err,files)=>{
+    if(err){
+      return res.status(500).json({error:"failed to retrieve filenames"});
+    }else{
+      res.json(files);
+    }
+  })
+});
+
+app.get("/file/:filename",(req,res)=>{
+  const fn = req.params.filename;
+  fs.readdir(path.join(__dirname,`../${fn}/`),(err,files)=>{
+    if(err){
+      res.status(500).json({ error:"file not found"});
+    }else{
+      res.json(files);
+    }
+  })
+})
+
+app.listen(PORT,console.log(`connected to port ${PORT}`));
+
 module.exports = app;
